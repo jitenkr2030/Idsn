@@ -59,6 +59,7 @@ model School {
   phone       String?
   email       String
   website     String?
+  logo        String?
   type        SchoolType
   established Int?
   studentCount Int?

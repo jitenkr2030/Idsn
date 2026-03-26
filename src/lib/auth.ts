@@ -11,6 +11,7 @@ export interface AuthUser {
   name: string
   role: UserRole
   isActive: boolean
+  schoolId?: string
 }
 
 export interface LoginCredentials {
@@ -39,7 +40,8 @@ export function generateToken(user: AuthUser): string {
     { 
       id: user.id, 
       email: user.email, 
-      role: user.role 
+      role: user.role,
+      schoolId: user.schoolId
     },
     JWT_SECRET,
     { expiresIn: '7d' }

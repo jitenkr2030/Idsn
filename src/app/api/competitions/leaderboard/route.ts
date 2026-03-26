@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 
     // Get level statistics
     const levelStats = await db.competitionLeaderboard.groupBy({
-      by: ['competition'],
+      by: ['competitionId'],
       where: whereClause,
       _count: true,
       _avg: {
