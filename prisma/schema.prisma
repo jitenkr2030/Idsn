@@ -1,0 +1,735 @@
+// IDSN Portal Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  password    String
+  role        UserRole @default(EDUCATOR)
+  phone       String?
+  avatar      String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  schoolProfile SchoolProfile?
+  educatorProfile EducatorProfile?
+  adminProfile AdminProfile?
+  certificates Certificate[]
+  enrollments Enrollment[]
+  achievements Achievement[]
+  notifications Notification[]
+  documents Document[]
+  auditSubmissions AuditSubmission[]
+  courseProgress CourseProgress[]
+  quizAttempts QuizAttempt[]
+  activityLogs ActivityLog[]
+  membership Membership?
+  memberDirectory MemberDirectory?
+
+  @@map("users")
+}
+
+enum UserRole {
+  SCHOOL_ADMIN
+  EDUCATOR
+  INTERNAL_ADMIN
+}
+
+// School Management
+model School {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  city        String
+  state       String
+  country     String
+  postalCode  String
+  phone       String?
+  email       String
+  website     String?
+  type        SchoolType
+  established Int?
+  studentCount Int?
+  teacherCount Int?
+  membershipTier MembershipTier @default(BASIC)
+  idsnRating  Int      @default(0) // 0-5 star rating
+  isVerified  Boolean  @default(false)
+  verificationDate DateTime?
+  expiryDate  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  adminProfile SchoolProfile?
+  certificates Certificate[]
+  auditSubmissions AuditSubmission[]
+  courses Course[]
+  resources Resource[]
+  activityLogs ActivityLog[]
+  educatorProfiles EducatorProfile[]
+  memberships Membership[]
+  memberDirectory MemberDirectory[]
+
+  @@map("schools")
+}
+
+enum SchoolType {
+  PRIMARY
+  SECONDARY
+  SENIOR_SECONDARY
+  HIGHER_SECONDARY
+  INTERNATIONAL
+  SPECIAL_EDUCATION
+}
+
+enum MembershipTier {
+  BASIC
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+// Profile Models
+model SchoolProfile {
+  id       String @id @default(cuid())
+  userId   String @unique
+  schoolId String
+  position String
+  bio      String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId])
+  @@map("school_profiles")
+}
+
+model EducatorProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  schoolId     String?
+  employeeId   String?
+  department   String?
+  subjects     String?  // JSON string of subjects array
+  experience   Int?     // Years of experience
+  qualifications String?
+  bio          String?
+  isCertified  Boolean  @default(false)
+  certificationDate DateTime?
+  
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School? @relation(fields: [schoolId], references: [id])
+  
+  expertise Expertise[] // Expertise areas
+
+  @@map("educator_profiles")
+}
+
+model AdminProfile {
+  id       String @id @default(cuid())
+  userId   String @unique
+  department String
+  level    AdminLevel
+  bio      String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_profiles")
+}
+
+enum AdminLevel {
+  SUPER_ADMIN
+  REGIONAL_ADMIN
+  VERIFICATION_ADMIN
+  TRAINING_ADMIN
+}
+
+// Certification System
+model Certificate {
+  id             String   @id @default(cuid())
+  certificateId  String   @unique // Public-facing ID
+  userId         String
+  schoolId       String?
+  type           CertificateType
+  title          String
+  description    String?
+  criteria       String?
+  score          Int?
+  maxScore       Int?
+  rating         Int?     // 1-5 stars
+  status         CertificateStatus @default(PENDING)
+  issuedDate     DateTime?
+  expiryDate     DateTime?
+  qrCode         String?  // Base64 encoded QR code
+  certificateUrl String?  // URL to view certificate
+  isPublic       Boolean  @default(true)
+  issuedBy       String?  // Admin user ID
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id])
+  school School? @relation(fields: [schoolId], references: [id])
+
+  @@map("certificates")
+}
+
+enum CertificateType {
+  SCHOOL_CERTIFICATION
+  EDUCATOR_BADGE
+  COURSE_COMPLETION
+  ACHIEVEMENT
+}
+
+enum CertificateStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+  REVOKED
+}
+
+// Audit and Verification
+model AuditChecklist {
+  id          String   @id @default(cuid())
+  category    String
+  title       String
+  description String?
+  weight      Int      @default(1) // Weight for scoring
+  isRequired  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items AuditItem[]
+
+  @@map("audit_checklists")
+}
+
+model AuditItem {
+  id           String   @id @default(cuid())
+  checklistId  String
+  title        String
+  description  String?
+  points       Int      @default(1)
+  evidenceType EvidenceType
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  checklist AuditChecklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  submissions AuditSubmissionItem[]
+
+  @@map("audit_items")
+}
+
+enum EvidenceType {
+  PHOTO
+  VIDEO
+  DOCUMENT
+  SPEED_TEST
+  SCREENSHOT
+  TEXT
+}
+
+model AuditSubmission {
+  id          String   @id @default(cuid())
+  userId      String
+  schoolId    String?
+  status      SubmissionStatus @default(DRAFT)
+  totalScore  Int      @default(0)
+  maxScore    Int      @default(0)
+  rating      Int?     // 1-5 stars
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+  reviewedBy  String?  // Admin user ID
+  feedback    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User  @relation(fields: [userId], references: [id])
+  school  School? @relation(fields: [schoolId], references: [id])
+  items   AuditSubmissionItem[]
+  documents Document[]
+
+  @@map("audit_submissions")
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  REVISION_REQUIRED
+}
+
+model AuditSubmissionItem {
+  id             String   @id @default(cuid())
+  submissionId   String
+  auditItemId    String
+  response       String?
+  evidenceUrl    String?
+  evidenceType   EvidenceType
+  score          Int      @default(0)
+  isCompleted    Boolean  @default(false)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  submission AuditSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  auditItem  AuditItem      @relation(fields: [auditItemId], references: [id])
+
+  @@map("audit_submission_items")
+}
+
+// Training System
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  category    String
+  level       CourseLevel @default(BEGINNER)
+  duration    Int      // Duration in minutes
+  thumbnail   String?
+  isPublished Boolean  @default(false)
+  isRequired  Boolean  @default(false)
+  points      Int      @default(0)
+  schoolId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school     School?  @relation(fields: [schoolId], references: [id])
+  modules    Module[]
+  enrollments Enrollment[]
+  prerequisites CoursePrerequisite[] @relation("CoursePrerequisites")
+  isPrerequisiteFor CoursePrerequisite[] @relation("PrerequisiteFor")
+
+  @@map("courses")
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  content     String?  // HTML/Markdown content
+  videoUrl    String?
+  order       Int
+  duration    Int      // Duration in minutes
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  quizzes   Quiz[]
+  progress  CourseProgress[]
+
+  @@map("modules")
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  moduleId    String
+  title       String
+  content     String?  // HTML/Markdown content
+  videoUrl    String?
+  order       Int
+  duration    Int      // Duration in minutes
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@map("lessons")
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  moduleId    String
+  title       String
+  description String?
+  timeLimit   Int?     // Time limit in minutes
+  passingScore Int     @default(70) // Passing percentage
+  maxAttempts Int      @default(3)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model Question {
+  id       String       @id @default(cuid())
+  quizId   String
+  question String
+  type     QuestionType
+  options  String?     // JSON string of options array
+  correctAnswer String
+  points   Int          @default(1)
+  order    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+  ESSAY
+}
+
+model CoursePrerequisite {
+  id             String @id @default(cuid())
+  courseId       String
+  prerequisiteId String
+
+  course       Course @relation("CoursePrerequisites", fields: [courseId], references: [id], onDelete: Cascade)
+  prerequisite Course @relation("PrerequisiteFor", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, prerequisiteId])
+  @@map("course_prerequisites")
+}
+
+// Enrollment and Progress
+model Enrollment {
+  id         String   @id @default(cuid())
+  userId     String
+  courseId   String
+  status     EnrollmentStatus @default(ACTIVE)
+  progress   Float    @default(0) // Progress percentage
+  startedAt  DateTime @default(now())
+  completedAt DateTime?
+  certificateUrl String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  SUSPENDED
+}
+
+model CourseProgress {
+  id         String   @id @default(cuid())
+  userId     String
+  moduleId   String
+  status     ProgressStatus @default(NOT_STARTED)
+  progress   Float    @default(0) // Progress percentage
+  timeSpent  Int      @default(0) // Time spent in minutes
+  startedAt  DateTime?
+  completedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  module Module @relation(fields: [moduleId], references: [id])
+
+  @@unique([userId, moduleId])
+  @@map("course_progress")
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model QuizAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  quizId     String
+  attempt    Int
+  score      Int
+  maxScore   Int
+  percentage Float
+  passed     Boolean
+  startedAt  DateTime @default(now())
+  completedAt DateTime?
+  timeSpent  Int      // Time spent in seconds
+
+  user User @relation(fields: [userId], references: [id])
+  quiz Quiz @relation(fields: [quizId], references: [id])
+  answers Answer[]
+
+  @@unique([userId, quizId, attempt])
+  @@map("quiz_attempts")
+}
+
+model Answer {
+  id           String @id @default(cuid())
+  attemptId    String
+  questionId   String
+  answer       String
+  isCorrect    Boolean
+  points       Int
+
+  attempt  QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@map("answers")
+}
+
+// Gamification and Achievements
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  type        AchievementType
+  title       String
+  description String?
+  icon        String?
+  points      Int      @default(0)
+  badgeUrl    String?
+  earnedAt    DateTime @default(now())
+  isPublic    Boolean  @default(true)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("achievements")
+}
+
+enum AchievementType {
+  COURSE_COMPLETION
+  CERTIFICATION_EARNED
+  PERFECT_SCORE
+  STREAK_ACHIEVEMENT
+  LEADERSHIP
+  COMMUNITY_CONTRIBUTION
+  DIGITAL_EXCELLENCE
+  INNOVATION_AWARD
+  MEMBERSHIP_MILESTONE
+  COMPETITION_WINNER
+  AUDIT_SUCCESS
+}
+
+// Resources and Documents
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  category    String
+  type        ResourceType
+  url         String?
+  fileUrl     String?
+  fileSize    Int?
+  isPublic    Boolean  @default(true)
+  isPremium   Boolean  @default(false)
+  downloadCount Int    @default(0)
+  schoolId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school School? @relation(fields: [schoolId], references: [id])
+
+  @@map("resources")
+}
+
+enum ResourceType {
+  DOCUMENT
+  VIDEO
+  TEMPLATE
+  WHITEPAPER
+  LESSON_PLAN
+  POLICY_GUIDE
+  SOFTWARE_TOOL
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  userId      String
+  submissionId String?
+  title       String
+  description String?
+  fileUrl     String
+  fileName    String
+  fileSize    Int
+  mimeType    String
+  category    String
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user       User            @relation(fields: [userId], references: [id])
+  submission AuditSubmission? @relation(fields: [submissionId], references: [id])
+
+  @@map("documents")
+}
+
+// Notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean  @default(false)
+  actionUrl String?
+  metadata  String?  // JSON metadata
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  SYSTEM
+  CERTIFICATION
+  COURSE_UPDATE
+  ACHIEVEMENT
+  REMINDER
+  ANNOUNCEMENT
+  ALERT
+}
+
+// Activity Logging
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  schoolId   String?
+  action     String
+  entity     String
+  entityId   String?
+  metadata   String?  // JSON metadata
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id])
+  school School? @relation(fields: [schoolId], references: [id])
+
+  @@map("activity_logs")
+}
+
+// ID Points System
+model IDPoints {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  schoolId    String?
+  totalPoints Int      @default(0)
+  availablePoints Int   @default(0)
+  lastUpdated DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@map("id_points")
+}
+
+model PointsTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        TransactionType
+  points      Int
+  description String
+  referenceId String?  // Reference to related entity
+  metadata    String?  // JSON metadata
+  createdAt   DateTime @default(now())
+
+  @@map("points_transactions")
+}
+
+enum TransactionType {
+  EARNED
+  REDEEMED
+  EXPIRED
+  ADJUSTED
+}
+
+// Membership Management
+model Membership {
+  id          String   @id @default(cuid())
+  schoolId    String
+  tier        MembershipTier @default(BASIC)
+  status      MembershipStatus @default(ACTIVE)
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  renewalDate DateTime?
+  points      Int      @default(0)
+  benefits    Json?    // Store membership benefits as JSON
+  paymentInfo Json?    // Store payment information
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId])
+  @@map("memberships")
+}
+
+enum MembershipStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  SUSPENDED
+  PENDING
+}
+
+// Member Directory
+model MemberDirectory {
+  id          String   @id @default(cuid())
+  schoolId    String
+  userId      String   @unique
+  isVisible   Boolean  @default(true)
+  bio         String?
+  expertise   String?  // JSON string of expertise areas
+  achievements String?  // JSON string of achievements
+  socialLinks Json?    // Social media links
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([schoolId, userId])
+  @@map("member_directory")
+}
+
+// Expertise Areas
+model Expertise {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  educatorProfiles EducatorProfile[]
+
+  @@map("expertise")
+}
