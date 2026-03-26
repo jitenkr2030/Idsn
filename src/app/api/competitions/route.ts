@@ -162,13 +162,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT /api/competitions/[id] - Update competition
-export async function PUT(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+// PUT /api/competitions - Update competition
+export async function PUT(request: NextRequest) {
   try {
-    const { id } = await context.params
     const token = request.cookies.get('auth-token')?.value
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -180,7 +176,11 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { status } = body
+    const { id, status } = body
+
+    if (!id) {
+      return NextResponse.json({ error: 'Competition ID is required' }, { status: 400 })
+    }
 
     const competition = await db.competition.update({
       where: { id },
