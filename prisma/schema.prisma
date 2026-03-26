@@ -535,6 +535,22 @@ enum AchievementType {
   AUDIT_SUCCESS
 }
 
+enum CompetitionActivityType {
+  TEACHER_TRAINING
+  INR99_ACADEMY_ADOPTION
+  OFFLINE_SERVER
+  PARENT_ENGAGEMENT
+  DIGITAL_INNOVATION
+  EVIDENCE_SUBMISSION
+}
+
+enum ActivityStatus {
+  PENDING
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
 // Resources and Documents
 model Resource {
   id          String   @id @default(cuid())
