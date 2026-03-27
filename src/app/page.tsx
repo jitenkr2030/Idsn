@@ -18,7 +18,11 @@ import {
   Globe,
   School,
   Target,
-  BarChart3
+  BarChart3,
+  FileText,
+  Trophy,
+  Medal,
+  ClipboardCheck
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -90,7 +94,7 @@ export default function LandingPage() {
               <span className="block text-yellow-300"> Digital Excellence</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-              Join India's leading digital education platform. Get certified, access training, 
+              Get certified through comprehensive digital audit assessment, compete in national competitions, 
               and lead the digital transformation in education.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -176,22 +180,50 @@ export default function LandingPage() {
                 </div>
                 <CardTitle>Digital School Certification</CardTitle>
                 <CardDescription>
-                  Get your school certified for digital excellence with comprehensive audit and verification
+                  Get your school certified through comprehensive digital audit assessment with detailed reports
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li className="flex items-center">
                     <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                    Digital infrastructure assessment
+                    Complete infrastructure audit
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                    Teacher training verification
+                    Detailed assessment report
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
                     Official certification badge
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                  <Trophy className="w-6 h-6 text-yellow-600" />
+                </div>
+                <CardTitle>National School Competition</CardTitle>
+                <CardDescription>
+                  Compete at District, State, and National levels for digital excellence recognition
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-center">
+                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                    Multi-level competition system
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                    Automated scoring & leaderboards
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                    National recognition & awards
                   </li>
                 </ul>
               </CardContent>
@@ -256,6 +288,155 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Digital Audit & Competition Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Comprehensive School Evaluation & Recognition
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Get detailed digital audit reports and compete with schools across India for excellence
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Digital Audit Assessment */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <ClipboardCheck className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Digital School Audit Assessment</h3>
+                  <p className="text-gray-600">Comprehensive evaluation of your school's digital infrastructure</p>
+                </div>
+              </div>
+              
+              <Card className="border-l-4 border-l-blue-500">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <FileText className="w-5 h-5 mr-2 text-blue-600" />
+                    Detailed Assessment Report
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-sm text-gray-600">
+                    <li className="flex items-start">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span><strong>Infrastructure Analysis:</strong> Complete evaluation of digital facilities, hardware, and software</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span><strong>Teacher Digital Literacy:</strong> Assessment of educator digital skills and training needs</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span><strong>Student Digital Access:</strong> Analysis of student digital device and internet access</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span><strong>Digital Curriculum Integration:</strong> Evaluation of digital teaching methods and content</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span><strong>Compliance & Standards:</strong> Verification against national digital education standards</span>
+                    </li>
+                  </ul>
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      <strong>Result:</strong> Official Digital School Certificate with detailed score report and improvement recommendations
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* School Competition */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                  <Trophy className="w-6 h-6 text-yellow-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">National School Competition</h3>
+                  <p className="text-gray-600">Compete and showcase your school's digital excellence</p>
+                </div>
+              </div>
+              
+              <Card className="border-l-4 border-l-yellow-500">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Medal className="w-5 h-5 mr-2 text-yellow-600" />
+                    Multi-Level Competition System
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-3 bg-yellow-50 rounded-lg">
+                      <h4 className="font-semibold text-yellow-800 mb-2">Competition Levels</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          <span><strong>District Level:</strong> Compete locally to qualify for state level</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          <span><strong>State Level:</strong> Battle for state championship and national qualification</span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                          <span><strong>National Level:</strong> Compete for India's top digital school recognition</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <ul className="space-y-2 text-sm text-gray-600">
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span><strong>Automated Scoring:</strong> Points awarded for digital initiatives, infrastructure, and innovation</span>
+                      </li>
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span><strong>Principal-Led:</strong> School principals manage and submit competition entries</span>
+                      </li>
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span><strong>Real-time Leaderboards:</strong> Track your school's ranking at each competition level</span>
+                      </li>
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span><strong>Prestigious Awards:</strong> Certificates, trophies, and national recognition</span>
+                      </li>
+                    </ul>
+                    
+                    <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Benefits:</strong> Enhanced school reputation, student pride, and national media recognition
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
+          <div className="mt-12 text-center">
+            <div className="inline-flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-yellow-50 rounded-lg border">
+              <div className="flex items-center">
+                <Zap className="w-5 h-5 text-blue-600 mr-2" />
+                <span className="text-sm font-medium">Audit Report Available</span>
+              </div>
+              <div className="w-px h-4 bg-gray-300"></div>
+              <div className="flex items-center">
+                <Trophy className="w-5 h-5 text-yellow-600 mr-2" />
+                <span className="text-sm font-medium">Competition Open</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Role-Based Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -294,7 +475,13 @@ export default function LandingPage() {
                     <li className="flex items-start">
                       <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5" />
                       <div>
-                        <strong>Digital Certification:</strong> Get your school certified and recognized
+                        <strong>Digital Audit Assessment:</strong> Get comprehensive school evaluation reports
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5" />
+                      <div>
+                        <strong>National Competition:</strong> Compete and showcase your school's excellence
                       </div>
                     </li>
                     <li className="flex items-start">
@@ -309,12 +496,6 @@ export default function LandingPage() {
                         <strong>Progress Tracking:</strong> Monitor digital adoption and training
                       </div>
                     </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5" />
-                      <div>
-                        <strong>Resource Management:</strong> Access digital tools and content
-                      </div>
-                    </li>
                   </ul>
                   <Link href="/auth/register?role=SCHOOL_ADMIN">
                     <Button size="lg" className="mt-6">
@@ -327,8 +508,12 @@ export default function LandingPage() {
                   <h4 className="font-semibold text-blue-900 mb-3">Key Benefits</h4>
                   <div className="space-y-2">
                     <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-500 mr-2" />
-                      <span className="text-sm">Official digital certification</span>
+                      <FileText className="w-4 h-4 text-blue-600 mr-2" />
+                      <span className="text-sm">Detailed audit reports</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Trophy className="w-4 h-4 text-yellow-600 mr-2" />
+                      <span className="text-sm">National competition access</span>
                     </div>
                     <div className="flex items-center">
                       <TrendingUp className="w-4 h-4 text-green-500 mr-2" />
@@ -336,7 +521,7 @@ export default function LandingPage() {
                     </div>
                     <div className="flex items-center">
                       <Shield className="w-4 h-4 text-blue-500 mr-2" />
-                      <span className="text-sm">Secure platform</span>
+                      <span className="text-sm">Official certification</span>
                     </div>
                   </div>
                 </div>

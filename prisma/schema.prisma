@@ -59,6 +59,7 @@ model School {
   phone       String?
   email       String
   website     String?
+  logo        String?
   type        SchoolType
   established Int?
   studentCount Int?
@@ -81,6 +82,9 @@ model School {
   educatorProfiles EducatorProfile[]
   memberships Membership[]
   memberDirectory MemberDirectory[]
+  competitionSubmissions CompetitionSubmission[]
+  competitionLeaderboards CompetitionLeaderboard[]
+  competitionCertificates CompetitionCertificate[]
 
   @@map("schools")
 }
@@ -533,6 +537,166 @@ enum AchievementType {
   MEMBERSHIP_MILESTONE
   COMPETITION_WINNER
   AUDIT_SUCCESS
+}
+
+enum CompetitionActivityType {
+  TEACHER_TRAINING
+  DIGITAL_PLATFORM_ADOPTION
+  OFFLINE_SERVER
+  PARENT_ENGAGEMENT
+  DIGITAL_INNOVATION
+  EVIDENCE_SUBMISSION
+}
+
+enum ActivityStatus {
+  PENDING
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+// Competition System
+enum CompetitionLevel {
+  DISTRICT
+  STATE
+  NATIONAL
+}
+
+enum CompetitionStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum CompetitionTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+model Competition {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  level       CompetitionLevel
+  startDate   DateTime
+  endDate     DateTime
+  submissionDeadline DateTime
+  resultsDate DateTime
+  status      CompetitionStatus @default(UPCOMING)
+  isActive    Boolean  @default(true)
+  maxParticipants Int?
+  prizePool   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  submissions CompetitionSubmission[]
+  leaderboards CompetitionLeaderboard[]
+  certificates CompetitionCertificate[]
+
+  @@map("competitions")
+}
+
+model CompetitionSubmission {
+  id          String   @id @default(cuid())
+  schoolId    String
+  competitionId String
+  totalPoints Int      @default(0)
+  tier        CompetitionTier @default(BRONZE)
+  rank        Int?
+  status      SubmissionStatus @default(DRAFT)
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+  feedback    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  activities CompetitionActivity[]
+  certificates CompetitionCertificate[]
+
+  @@unique([schoolId, competitionId])
+  @@map("competition_submissions")
+}
+
+model CompetitionActivity {
+  id          String   @id @default(cuid())
+  submissionId String
+  type        CompetitionActivityType
+  title       String
+  description String?
+  points      Int      @default(0)
+  evidenceUrl String?
+  evidenceType EvidenceType
+  status      ActivityStatus @default(PENDING)
+  submittedAt DateTime?
+  reviewedAt  DateTime?
+  feedback    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  submission CompetitionSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, type])
+  @@map("competition_activities")
+}
+
+model CompetitionLeaderboard {
+  id          String   @id @default(cuid())
+  competitionId String
+  schoolId    String
+  rank        Int
+  points      Int
+  tier        CompetitionTier
+  previousRank Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionId, schoolId])
+  @@map("competition_leaderboards")
+}
+
+model CompetitionCertificate {
+  id          String   @id @default(cuid())
+  certificateId String   @unique
+  competitionId String
+  schoolId    String
+  submissionId String
+  type        CompetitionCertificateType
+  title       String
+  description String?
+  rank        Int
+  points      Int
+  tier        CompetitionTier
+  issuedDate  DateTime
+  expiryDate  DateTime
+  qrCode      String?
+  certificateUrl String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  submission CompetitionSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@map("competition_certificates")
+}
+
+enum CompetitionCertificateType {
+  DISTRICT_WINNER
+  STATE_WINNER
+  NATIONAL_WINNER
+  PARTICIPATION
+  EXCELLENCE
+  INNOVATION
 }
 
 // Resources and Documents

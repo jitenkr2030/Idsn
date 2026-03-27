@@ -6,7 +6,7 @@ export type CompetitionStatus = 'UPCOMING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED
 
 export type ActivityType = 
   | 'TEACHER_TRAINING' 
-  | 'ACADEMY_ADOPTION' 
+  | 'DIGITAL_PLATFORM_ADOPTION' 
   | 'OFFLINE_SERVER' 
   | 'PARENT_ENGAGEMENT' 
   | 'DIGITAL_INNOVATION'
@@ -28,7 +28,7 @@ export interface CompetitionConfig {
 // Activity Points Configuration
 export const ACTIVITY_POINTS = {
   TEACHER_TRAINING: 10,
-  ACADEMY_ADOPTION: 15,
+  DIGITAL_PLATFORM_ADOPTION: 15,
   OFFLINE_SERVER: 20,
   PARENT_ENGAGEMENT: 5,
   DIGITAL_INNOVATION: 10,

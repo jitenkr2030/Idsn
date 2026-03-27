@@ -11,6 +11,7 @@ export interface AuthUser {
   name: string
   role: UserRole
   isActive: boolean
+  schoolId?: string
 }
 
 export interface LoginCredentials {
@@ -39,7 +40,8 @@ export function generateToken(user: AuthUser): string {
     { 
       id: user.id, 
       email: user.email, 
-      role: user.role 
+      role: user.role,
+      schoolId: user.schoolId
     },
     JWT_SECRET,
     { expiresIn: '7d' }
@@ -74,12 +76,21 @@ export async function authenticateUser(credentials: LoginCredentials): Promise<A
     return null
   }
 
+  // Get schoolId based on user role
+  let schoolId: string | undefined
+  if (user.role === 'SCHOOL_ADMIN' && user.schoolProfile) {
+    schoolId = user.schoolProfile.schoolId || undefined
+  } else if (user.role === 'EDUCATOR' && user.educatorProfile) {
+    schoolId = user.educatorProfile.schoolId || undefined
+  }
+
   return {
     id: user.id,
     email: user.email,
     name: user.name,
     role: user.role,
-    isActive: user.isActive
+    isActive: user.isActive,
+    schoolId
   }
 }
 

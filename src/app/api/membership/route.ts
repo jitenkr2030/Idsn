@@ -15,6 +15,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
+    if (!decoded.schoolId) {
+      return NextResponse.json({ error: 'School ID is required' }, { status: 400 })
+    }
+
     // Get membership for the user's school
     const membership = await db.membership.findFirst({
       where: {
@@ -88,6 +92,10 @@ export async function POST(request: NextRequest) {
     const decoded = verifyToken(token)
     if (!decoded || decoded.role !== 'SCHOOL_ADMIN' && decoded.role !== 'INTERNAL_ADMIN') {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
+    }
+
+    if (!decoded.schoolId) {
+      return NextResponse.json({ error: 'School ID is required' }, { status: 400 })
     }
 
     const body = await request.json()
