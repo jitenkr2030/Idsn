@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
       // Create default ID points if none exists
       idPoints = await db.iDPoints.create({
         data: {
+          userId: decoded.id,
           schoolId: decoded.schoolId,
           totalPoints: 0,
           availablePoints: 0
