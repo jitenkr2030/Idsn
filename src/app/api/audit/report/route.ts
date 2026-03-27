@@ -246,7 +246,8 @@ function generateRecommendations(categoryScores: any, overallPercentage: number)
 
   // Category-specific recommendations
   Object.entries(categoryScores).forEach(([category, scores]) => {
-    if (scores.percentage < 70) {
+    const typedScores = scores as { percentage: number; score: number; maxScore: number }
+    if (typedScores.percentage < 70) {
       switch (category) {
         case 'INFRASTRUCTURE':
           recommendations.push(`Improve digital infrastructure: Upgrade computers, enhance internet connectivity, and ensure proper classroom technology setup.`)

@@ -4,10 +4,10 @@ import { db } from '@/lib/db'
 // GET /api/verify/[certificateId] - Verify certificate
 export async function GET(
   request: NextRequest,
-  { params }: { params: { certificateId: string } }
+  { params }: { params: Promise<{ certificateId: string }> }
 ) {
   try {
-    const { certificateId } = params
+    const { certificateId } = await params
 
     if (!certificateId) {
       return NextResponse.json(
