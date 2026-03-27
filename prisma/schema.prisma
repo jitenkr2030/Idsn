@@ -541,7 +541,7 @@ enum AchievementType {
 
 enum CompetitionActivityType {
   TEACHER_TRAINING
-  INR99_ACADEMY_ADOPTION
+  DIGITAL_PLATFORM_ADOPTION
   OFFLINE_SERVER
   PARENT_ENGAGEMENT
   DIGITAL_INNOVATION
@@ -640,6 +640,7 @@ model CompetitionActivity {
 
   submission CompetitionSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 
+  @@unique([submissionId, type])
   @@map("competition_activities")
 }
 

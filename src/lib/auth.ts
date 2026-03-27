@@ -76,12 +76,21 @@ export async function authenticateUser(credentials: LoginCredentials): Promise<A
     return null
   }
 
+  // Get schoolId based on user role
+  let schoolId: string | undefined
+  if (user.role === 'SCHOOL_ADMIN' && user.schoolProfile) {
+    schoolId = user.schoolProfile.schoolId
+  } else if (user.role === 'EDUCATOR' && user.educatorProfile) {
+    schoolId = user.educatorProfile.schoolId
+  }
+
   return {
     id: user.id,
     email: user.email,
     name: user.name,
     role: user.role,
-    isActive: user.isActive
+    isActive: user.isActive,
+    schoolId
   }
 }
 

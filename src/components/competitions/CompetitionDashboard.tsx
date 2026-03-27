@@ -106,7 +106,7 @@ interface CompetitionActivity {
 
 enum CompetitionActivityType {
   TEACHER_TRAINING = 'TEACHER_TRAINING',
-  INR99_ACADEMY_ADOPTION = 'INR99_ACADEMY_ADOPTION',
+  DIGITAL_PLATFORM_ADOPTION = 'DIGITAL_PLATFORM_ADOPTION',
   OFFLINE_SERVER = 'OFFLINE_SERVER',
   PARENT_ENGAGEMENT = 'PARENT_ENGAGEMENT',
   DIGITAL_INNOVATION = 'DIGITAL_INNOVATION',
@@ -115,7 +115,7 @@ enum CompetitionActivityType {
 
 const ACTIVITY_POINTS = {
   TEACHER_TRAINING: 10,
-  INR99_ACADEMY_ADOPTION: 15,
+  DIGITAL_PLATFORM_ADOPTION: 15,
   OFFLINE_SERVER: 20,
   PARENT_ENGAGEMENT: 5,
   DIGITAL_INNOVATION: 10,
@@ -124,7 +124,7 @@ const ACTIVITY_POINTS = {
 
 const ACTIVITY_DESCRIPTIONS = {
   TEACHER_TRAINING: 'Complete teacher training programs and workshops',
-  INR99_ACADEMY_ADOPTION: 'Adopt and implement INR99 Academy platform',
+  DIGITAL_PLATFORM_ADOPTION: 'Adopt and implement digital learning platform',
   OFFLINE_SERVER: 'Set up and maintain offline server infrastructure',
   PARENT_ENGAGEMENT: 'Conduct parent engagement sessions and meetings',
   DIGITAL_INNOVATION: 'Implement innovative digital learning solutions',
@@ -596,7 +596,7 @@ export default function CompetitionDashboard() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="TEACHER_TRAINING">Teacher Training</SelectItem>
-                              <SelectItem value="INR99_ACADEMY_ADOPTION">INR99 Academy Adoption</SelectItem>
+                              <SelectItem value="DIGITAL_PLATFORM_ADOPTION">Digital Platform Adoption</SelectItem>
                               <SelectItem value="OFFLINE_SERVER">Offline Server</SelectItem>
                               <SelectItem value="PARENT_ENGAGEMENT">Parent Engagement</SelectItem>
                               <SelectItem value="DIGITAL_INNOVATION">Digital Innovation</SelectItem>

@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const whereClause: any = {}
 
     if (decoded.role === 'SCHOOL_ADMIN') {
-      whereClause.schoolId = decoded.schoolId
+      whereClause.schoolId = decoded.schoolId!
     }
 
     if (competitionId) {
@@ -114,6 +114,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
     }
 
+    if (!decoded.schoolId) {
+      return NextResponse.json({ error: 'School ID is required' }, { status: 400 })
+    }
+
     const body = await request.json()
     const { competitionId, activities } = body
 
@@ -137,13 +141,13 @@ export async function POST(request: NextRequest) {
       .filter((activity: any) => activity.status === 'APPROVED')
       .reduce((sum: number, activity: any) => sum + activity.points, 0)
 
-    const tier = getCompetitionTier(totalPoints)
+    const tier = getCompetitionTier(totalPoints) as 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM'
 
     // Create or update submission
     const submission = await db.competitionSubmission.upsert({
       where: {
         schoolId_competitionId: {
-          schoolId: decoded.schoolId,
+          schoolId: decoded.schoolId!,
           competitionId
         }
       },
@@ -154,7 +158,7 @@ export async function POST(request: NextRequest) {
         submittedAt: new Date()
       },
       create: {
-        schoolId: decoded.schoolId,
+        schoolId: decoded.schoolId!,
         competitionId,
         totalPoints,
         tier,
@@ -195,7 +199,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update leaderboard
-    await updateLeaderboard(competitionId, decoded.schoolId, totalPoints, tier)
+    await updateLeaderboard(competitionId, decoded.schoolId!, totalPoints, tier)
 
     // Award points for submission
     await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/id-points`, {
@@ -221,7 +225,7 @@ export async function POST(request: NextRequest) {
     await db.activityLog.create({
       data: {
         userId: decoded.id,
-        schoolId: decoded.schoolId,
+        schoolId: decoded.schoolId!,
         action: 'COMPETITION_SUBMISSION',
         entity: 'CompetitionSubmission',
         entityId: submission.id,
@@ -248,7 +252,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function updateLeaderboard(competitionId: string, schoolId: string, points: number, tier: string) {
+async function updateLeaderboard(competitionId: string, schoolId: string, points: number, tier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM') {
   // Get current rank
   const currentLeaderboard = await db.competitionLeaderboard.findFirst({
     where: {
@@ -318,7 +322,7 @@ async function updateLeaderboard(competitionId: string, schoolId: string, points
         competitionId,
         schoolId: ranking.schoolId,
         points: ranking.points,
-        tier: getCompetitionTier(ranking.points),
+        tier: getCompetitionTier(ranking.points) as 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM',
         rank: ranking.rank
       }
     })
