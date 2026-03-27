@@ -375,14 +375,14 @@ export default function AuditForm() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">Required Items</span>
                     <span className="text-sm text-gray-500">
-                      {selectedChecklist.items.filter(item => item.isRequired).length} total
+                      {selectedChecklist.items.filter(item => (item as any).isRequired).length} total
                     </span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">Completed</span>
                     <span className="text-sm text-gray-500">
                       {selectedChecklist.items.filter(item => 
-                        item.isRequired && formData[item.id]?.isCompleted
+                        (item as any).isRequired && formData[item.id]?.isCompleted
                       ).length}
                     </span>
                   </div>
@@ -392,14 +392,14 @@ export default function AuditForm() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">Optional Items</span>
                     <span className="text-sm text-gray-500">
-                      {selectedChecklist.items.filter(item => !item.isRequired).length} total
+                      {selectedChecklist.items.filter(item => !(item as any).isRequired).length} total
                     </span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">Completed</span>
                     <span className="text-sm text-gray-500">
                       {selectedChecklist.items.filter(item => 
-                        !item.isRequired && formData[item.id]?.isCompleted
+                        !(item as any).isRequired && formData[item.id]?.isCompleted
                       ).length}
                     </span>
                   </div>
@@ -471,7 +471,7 @@ export default function AuditForm() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
                         <h4 className="font-medium">{item.title}</h4>
-                        {item.isRequired && (
+                        {(item as any).isRequired && (
                           <Badge variant="destructive" className="text-xs">Required</Badge>
                         )}
                         <Badge variant="outline" className="text-xs">
