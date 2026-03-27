@@ -16,6 +16,6 @@ export type ResourceType = 'DOCUMENT' | 'VIDEO' | 'TEMPLATE' | 'WHITEPAPER' | 'L
 export type CompetitionLevel = 'DISTRICT' | 'STATE' | 'NATIONAL'
 export type CompetitionStatus = 'UPCOMING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED'
 export type CompetitionTier = 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM'
-export type ActivityType = 'TEACHER_TRAINING' | 'ACADEMY_ADOPTION' | 'OFFLINE_SERVER' | 'PARENT_ENGAGEMENT' | 'DIGITAL_INNOVATION'
+export type ActivityType = 'TEACHER_TRAINING' | 'DIGITAL_PLATFORM_ADOPTION' | 'OFFLINE_SERVER' | 'PARENT_ENGAGEMENT' | 'DIGITAL_INNOVATION'
 export type EvidenceStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 export type LeaderboardType = 'DISTRICT' | 'STATE' | 'NATIONAL'

@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     // Get recent transactions
     const transactions = await db.pointsTransaction.findMany({
       where: {
-        schoolId: decoded.schoolId
+        userId: decoded.id
       },
       orderBy: { createdAt: 'desc' },
       take: 10
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     // Create points transaction
     const transaction = await db.pointsTransaction.create({
       data: {
-        schoolId: decoded.schoolId,
+        userId: decoded.id,
         type,
         points,
         description,
@@ -125,6 +125,7 @@ export async function POST(request: NextRequest) {
     if (!idPoints) {
       idPoints = await db.iDPoints.create({
         data: {
+          userId: decoded.id,
           schoolId: decoded.schoolId,
           totalPoints: 0,
           availablePoints: 0

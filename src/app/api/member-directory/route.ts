@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
 
     // Get membership tier statistics
     const tierStats = await db.memberDirectory.groupBy({
-      by: ['school'],
+      by: ['schoolId'],
       _count: true
     })
 
@@ -121,6 +121,10 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const { bio, expertise, achievements, socialLinks, isVisible } = body
+
+    if (!decoded.schoolId) {
+      return NextResponse.json({ error: 'School ID is required' }, { status: 400 })
+    }
 
     // Update or create member directory entry
     const memberDirectory = await db.memberDirectory.upsert({
