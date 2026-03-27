@@ -31,8 +31,8 @@ import {
   Download,
   Share2,
   Medal,
-  Crown,
-  Flag,
+  Crown as CrownIcon,
+  Flag as FlagIcon,
   BarChart3,
   FileText,
   Monitor,
@@ -106,7 +106,7 @@ interface CompetitionActivity {
 
 enum CompetitionActivityType {
   TEACHER_TRAINING = 'TEACHER_TRAINING',
-  DIGITAL_PLATFORM_ADOPTION = 'DIGITAL_PLATFORM_ADOPTION',
+  INR99_ACADEMY_ADOPTION = 'INR99_ACADEMY_ADOPTION',
   OFFLINE_SERVER = 'OFFLINE_SERVER',
   PARENT_ENGAGEMENT = 'PARENT_ENGAGEMENT',
   DIGITAL_INNOVATION = 'DIGITAL_INNOVATION',
@@ -115,7 +115,7 @@ enum CompetitionActivityType {
 
 const ACTIVITY_POINTS = {
   TEACHER_TRAINING: 10,
-  DIGITAL_PLATFORM_ADOPTION: 15,
+  INR99_ACADEMY_ADOPTION: 15,
   OFFLINE_SERVER: 20,
   PARENT_ENGAGEMENT: 5,
   DIGITAL_INNOVATION: 10,
@@ -124,7 +124,7 @@ const ACTIVITY_POINTS = {
 
 const ACTIVITY_DESCRIPTIONS = {
   TEACHER_TRAINING: 'Complete teacher training programs and workshops',
-  DIGITAL_PLATFORM_ADOPTION: 'Adopt and implement digital learning platform',
+  INR99_ACADEMY_ADOPTION: 'Adopt and implement INR99 Academy platform',
   OFFLINE_SERVER: 'Set up and maintain offline server infrastructure',
   PARENT_ENGAGEMENT: 'Conduct parent engagement sessions and meetings',
   DIGITAL_INNOVATION: 'Implement innovative digital learning solutions',
@@ -202,7 +202,7 @@ export default function CompetitionDashboard() {
     const newActivity: CompetitionActivity = {
       id: '',
       submissionId: submission?.id || '',
-      type: 'TEACHER_TRAINING',
+      type: 'TEACHER_TRAINING' as CompetitionActivityType,
       title: '',
       description: '',
       points: 10,
@@ -270,11 +270,11 @@ export default function CompetitionDashboard() {
   const getLevelIcon = (level: string) => {
     switch (level) {
       case 'DISTRICT':
-        return <Flag className="w-5 h-5 text-blue-500" />
+        return <FlagIcon className="w-5 h-5 text-blue-500" />
       case 'STATE':
-        return <Flag className="w-5 h-5 text-green-500" />
+        return <FlagIcon className="w-5 h-5 text-green-500" />
       case 'NATIONAL':
-        return <Crown className="w-5 h-5 text-purple-500" />
+        return <CrownIcon className="w-5 h-5 text-purple-500" />
       default:
         return <Trophy className="w-5 h-5 text-gray-500" />
     }
