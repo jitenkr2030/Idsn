@@ -390,7 +390,7 @@ export default function CertificateGenerator({
                 <div>
                   <p className="font-medium text-green-800">Certificate Ready</p>
                   <p className="text-sm text-green-600">
-                    Certificate ID: {certificate.certificateId}
+                    Certificate ID: {(certificate as any).certificateId || 'Generated'}
                   </p>
                 </div>
               </div>

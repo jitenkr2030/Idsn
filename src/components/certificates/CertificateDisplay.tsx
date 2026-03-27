@@ -110,7 +110,7 @@ Description: ${certificate.description}
 
 Score: ${certificate.score}/${certificate.maxScore}
 Rating: ${certificate.rating}/5 Stars
-Grade: ${certificate.grade || 'N/A'}
+Grade: ${(certificate as any).grade || 'N/A'}
 
 Issued To: ${certificate.user.name}
 Email: ${certificate.user.email}
